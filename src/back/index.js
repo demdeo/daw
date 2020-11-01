@@ -46,13 +46,35 @@ app.get('/dispositivos/:id', function (req, res, next) {
 
 // Espera recibir algo del estilo {id:1,state:1}
 // Devuelvo el dato modificado
-app.post('/dispositivos', function (req, res) {
-    conexionMysql.query('Update Devices set state=? where id=?', [req.params.state, req.params.id], function (err, respuesta) {
+app.post('/dispositivos/estados', function (req, res, next) {
+    conexionMysql.query('Update Devices set state=? where id=?', [req.body.state, req.body.id], function (err, respuesta) {
         if (err) {
             res.send(err).status(400);
             return;
         }
-        res.send("Se actualizo correctamente: " + JSON.stringify(respuesta)).status(200);
+        res.send("Se actualizó correctamente: " + JSON.stringify(respuesta)).status(200);
+    });
+});
+
+app.post('/dispositivos/tipos', function (req, res, next) {
+    conexionMysql.query('Update Devices set type=? where id=?', [req.body.type, req.body.id], function (err, respuesta) {
+        if (err) {
+            res.send(err).status(400);
+            return;
+        }
+        res.send("Se actualizó correctamente: " + JSON.stringify(respuesta)).status(200);
+    });
+});
+
+// Espera recibir algo del estilo {id:1,state:1}
+// Devuelvo el dato modificado
+app.post('/dispositivos/referencias', function (req, res, next) {
+    conexionMysql.query('Update Devices set name=?, description=? where id=?', [req.body.name, req.body.description, req.body.id], function (err, respuesta) {
+        if (err) {
+            res.send(err).status(400);
+            return;
+        }
+        res.send("Se actualizó correctamente: " + JSON.stringify(respuesta)).status(200);
     });
 });
 

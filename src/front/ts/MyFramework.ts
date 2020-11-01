@@ -66,7 +66,7 @@ class MyFramework
             }
         };
         
-        xhr.open('POST', url);
+        xhr.open('POST', url, true);
 
         // envio JSON en body de request (Usar con NODEJS)
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -82,7 +82,7 @@ class MyFramework
         //______________________________
     }
 
-    configEventLister (event:string, id:string, listener:EventListenerObject):void
+    configEventListener (event:string, id:string, listener:EventListenerObject):void
     {
         let b:HTMLElement = document.getElementById (id);
         b.addEventListener (event,listener);

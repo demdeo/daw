@@ -41,7 +41,8 @@ class Main implements EventListenerObject, GETResponseListener, POSTResponseList
         // let b:HTMLElement = document.getElementById ("boton");
         // b.addEventListener ("click", this);
 
-        this.myf.configEventLister ("click", "boton", this);
+        this.myf.configEventListener ("click", "boton", this);
+        this.myf.configEventListener ("click", "save", this);
 
         this.myf.requestGET ("http://localhost:8000/dispositivos", this);
 
@@ -65,19 +66,55 @@ class Main implements EventListenerObject, GETResponseListener, POSTResponseList
         console.log (`se hizo "${evt.type}"`);
 
         let b:HTMLElement = this.myf.getElementByEvent (evt);
-        console.log (b);
+        console.log ("Esto es b: " + b);
 
         if (b.id == "boton")
         {
             this.counter ++;
             b.textContent = `Click ${this.counter}`;
         }
-        else 
-        {
-            let state:boolean = this.view.getSwitchStateById (b.id);
 
+        else if (b.id.startsWith("dev_")) 
+        {
+            /* let state:boolean = this.view.getSwitchStateById (b.id);
+            console.log("b.id es: " + b.id + " y state es: " + state);
             let data = { "id":`${b.id}`, "state":state };
-            this.myf.requestPOST ("https://cors-anywhere.herokuapp.com/https://postman-echo.com/post", data, this);
+            console.log("data en handleEvent es: " + data)
+            this.myf.requestPOST ("http://localhost:8000/dispositivos", data, this); */
+            console.log(`Switch id: ${b.id}`);
+            console.log(`Está on: ${(<HTMLInputElement>b).checked}`);
+            let state:boolean = this.view.getPowerSwitchStateById(b.id);
+            let id:string = b.id.replace("dev_", "");
+            let data = { "id": id, "state": state };
+            console.log("data en handleEvent es: " + data);
+            this.myf.requestPOST ("http://localhost:8000/dispositivos/estados", data, this);
+        }
+        
+        else if (b.id.startsWith("type")) 
+        {
+            console.log(`Switch id: ${b.id}`);
+            console.log(`Está: ${(<HTMLInputElement>b).checked}`);
+            let type:boolean = this.view.getTypeSwitchStateById(b.id);
+            let id:string = b.id.replace("type_", "");
+            let data = { "id": id, "type": type };
+            console.log("data en handleEvent es: " + data);
+            this.myf.requestPOST ("http://localhost:8000/dispositivos/tipos", data, this);
+        } 
+        else
+        {
+            let lista: Array<string>;
+            lista = new Array<string>(); // Array vacio
+            lista.push('1', '2', '3', '4', '5', '6');
+            for(let i in lista)
+            {
+                let name:string = this.view.getNameValueById(`name_${lista[i]}`);
+                let description:string = this.view.getDescriptionValueById(`desc_${lista[i]}`);
+                let id:string = lista[i];
+                // let id:string = b.id.replace("dev_", "");
+                let data = { "name":name, "description":description, "id":id };
+                console.log("data en handleEvent es: " + data);
+                this.myf.requestPOST ("http://localhost:8000/dispositivos/referencias", data, this);
+            }
         }
     }
 
@@ -94,6 +131,11 @@ class Main implements EventListenerObject, GETResponseListener, POSTResponseList
         for (let d of data)
         {
             let b:HTMLElement = this.myf.getElementById (`dev_${d.id}`);
+            b.addEventListener ("click", this);
+        }
+        for (let d of data)
+        {
+            let b:HTMLElement = this.myf.getElementById (`type_${d.id}`);
             b.addEventListener ("click", this);
         }
     }
